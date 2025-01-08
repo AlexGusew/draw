@@ -19,7 +19,7 @@ import { drawPath, drawLine, optimizePath } from "./drawingUtils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import debounce from "lodash/debounce";
+// import debounce from "lodash/debounce";
 import { MIN_FORCE_THRESHOLD } from "@/lib/constants";
 
 const CHUNK_SIZE = 1000; // Number of points per chunk

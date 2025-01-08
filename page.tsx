@@ -1,5 +1,4 @@
-import DrawingTool from "@/components/DrawingTool";
-import Image from "next/image";
+import DrawingTool from './DrawingTool';
 
 export default function Home() {
   return (
@@ -9,3 +8,4 @@ export default function Home() {
     </main>
   );
 }
+

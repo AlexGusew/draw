@@ -1,4 +1,4 @@
-import DrawingTool from './DrawingTool';
+import DrawingTool from "@/components/DrawingTool";
 
 export default function Home() {
   return (
@@ -8,4 +8,3 @@ export default function Home() {
     </main>
   );
 }
-

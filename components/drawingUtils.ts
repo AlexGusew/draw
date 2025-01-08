@@ -1,14 +1,14 @@
-import { Path, Point, PathChunk } from './types';
+import { Path, Point, PathChunk } from "./types";
 
-const MIN_FORCE_THRESHOLD = 0.00;
+const MIN_FORCE_THRESHOLD = 0.0;
 const OPTIMIZATION_TOLERANCE = 0.5;
 
 export function drawPath(ctx: CanvasRenderingContext2D, path: Path) {
   const { color, brushSize, points } = path;
   ctx.strokeStyle = color;
   ctx.lineWidth = brushSize;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
 
   if (points.length > 1) {
     ctx.beginPath();
@@ -17,18 +17,18 @@ export function drawPath(ctx: CanvasRenderingContext2D, path: Path) {
     for (let i = 1; i < points.length; i++) {
       const p1 = points[i - 1];
       const p2 = points[i];
-      
-      if (p2.force < MIN_FORCE_THRESHOLD) {
+
+      if (p2.force !== undefined && p2.force < MIN_FORCE_THRESHOLD) {
         continue;
       }
 
       const midPoint = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
-      
+
       ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-      
+
       const force = p2.force || 0.5;
       ctx.lineWidth = brushSize * force;
-      
+
       ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(midPoint.x, midPoint.y);
@@ -38,20 +38,26 @@ export function drawPath(ctx: CanvasRenderingContext2D, path: Path) {
     const force = point.force || 0.5;
     if (force >= MIN_FORCE_THRESHOLD) {
       ctx.beginPath();
-      ctx.arc(point.x, point.y, brushSize * force / 2, 0, Math.PI * 2);
+      ctx.arc(point.x, point.y, (brushSize * force) / 2, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 }
 
-export function drawLine(ctx: CanvasRenderingContext2D, p1: Point, p2: Point, color: string, lineWidth: number) {
+export function drawLine(
+  ctx: CanvasRenderingContext2D,
+  p1: Point,
+  p2: Point,
+  color: string,
+  lineWidth: number
+) {
   ctx.beginPath();
   ctx.moveTo(p1.x, p1.y);
   ctx.lineTo(p2.x, p2.y);
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
   ctx.stroke();
 }
 
@@ -84,7 +90,10 @@ function distance(p1: Point, p2: Point): number {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-export function createPathChunks(paths: Path[], chunkSize: number): PathChunk[] {
+export function createPathChunks(
+  paths: Path[],
+  chunkSize: number
+): PathChunk[] {
   const chunks: PathChunk[] = [];
   let currentChunk: PathChunk = { paths: [] };
 
@@ -102,4 +111,3 @@ export function createPathChunks(paths: Path[], chunkSize: number): PathChunk[] 
 
   return chunks;
 }
-

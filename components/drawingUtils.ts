@@ -1,7 +1,5 @@
+import { MIN_FORCE_THRESHOLD, OPTIMIZATION_TOLERANCE } from "@/lib/constants";
 import { Path, Point, PathChunk } from "./types";
-
-const MIN_FORCE_THRESHOLD = 0.0;
-const OPTIMIZATION_TOLERANCE = 0.5;
 
 export function drawPath(ctx: CanvasRenderingContext2D, path: Path) {
   const { color, brushSize, points } = path;

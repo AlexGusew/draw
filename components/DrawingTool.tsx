@@ -15,11 +15,12 @@ import {
   DrawingAction,
   PathChunk,
 } from "./types";
-import { drawPath, drawLine } from "./drawingUtils";
+import { drawPath, drawLine, optimizePath } from "./drawingUtils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import debounce from "lodash/debounce";
+import debounce from "lodash/debounce";
+import { MIN_FORCE_THRESHOLD } from "@/lib/constants";
 
 const CHUNK_SIZE = 1000; // Number of points per chunk
 const SCALE_FACTOR = 0.5; // Scale factor for the low-res canvas
@@ -30,8 +31,6 @@ const initialState: DrawingState = {
   currentPathIndex: -1,
   isDrawing: false,
 };
-
-const MIN_FORCE_THRESHOLD = 0.0;
 
 function drawingReducer(
   state: DrawingState,
@@ -111,11 +110,24 @@ function drawingReducer(
         };
       }
     case "END_PATH":
+      console.log("END_PATH", state, state.isDrawing);
+
       if (!state.isDrawing) return state;
       return {
         ...state,
+        pathChunks: [
+          ...state.pathChunks.slice(0, -3),
+          ...state.pathChunks.slice(-3).map((chunk) => ({
+            ...chunk,
+            paths: chunk.paths.map((c) => ({
+              ...c,
+              points: optimizePath(c.points),
+            })),
+          })),
+        ],
         isDrawing: false,
       };
+
     case "UNDO":
       if (state.currentChunkIndex < 0) return state;
       if (state.currentPathIndex > 0) {
@@ -365,6 +377,14 @@ const DrawingTool: React.FC<DrawingToolProps> = React.memo(function Comp({
 
   return (
     <div className="flex flex-col items-center space-y-4">
+      <pre>
+        Chunks{" "}
+        {JSON.stringify(
+          state.pathChunks.map((c) =>
+            c.paths.reduce((acc, p) => acc + p.points.length, 0)
+          )
+        )}
+      </pre>
       <div className="relative">
         <canvas
           ref={lowResCanvasRef}
